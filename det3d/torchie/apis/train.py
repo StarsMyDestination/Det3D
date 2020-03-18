@@ -311,7 +311,7 @@ def train_detector(model, dataset, cfg, distributed=False, validate=False, logge
     logger.info(f"model structure: {model}")
 
     trainer = Trainer(
-        model, batch_processor, optimizer, lr_scheduler, cfg.work_dir, cfg.log_level
+        model, batch_processor, optimizer, lr_scheduler, cfg.work_dir, cfg.log_level, logger=logger,
     )
 
     if distributed:

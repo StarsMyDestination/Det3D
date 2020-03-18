@@ -2,6 +2,8 @@ import argparse
 import json
 import os
 import sys
+import time
+import logging
 
 import numpy as np
 import torch
@@ -70,6 +72,7 @@ def main():
     # update configs according to CLI args
     if args.work_dir is not None:
         cfg.work_dir = args.work_dir
+        os.makedirs(cfg.work_dir, exist_ok=True)
     if args.resume_from is not None:
         cfg.resume_from = args.resume_from
 
@@ -92,6 +95,15 @@ def main():
     logger.info(f"torch.backends.cudnn.benchmark: {torch.backends.cudnn.benchmark}")
 
     if args.local_rank == 0:
+        log_filename = "{}.log".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()))
+        log_file = os.path.join(cfg.work_dir, log_filename)
+        file_handler = logging.FileHandler(log_file, 'w')
+        file_handler.setFormatter(
+            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        )
+        file_handler.setLevel('INFO')
+        logger.addHandler(file_handler)
+
         # copy important files to backup
         backup_dir = os.path.join(cfg.work_dir, "det3d")
         os.makedirs(backup_dir, exist_ok=True)
