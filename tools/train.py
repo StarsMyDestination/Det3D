@@ -91,8 +91,6 @@ def main():
 
     # init logger before other steps
     logger = get_root_logger(cfg.log_level)
-    logger.info("Distributed training: {}".format(distributed))
-    logger.info(f"torch.backends.cudnn.benchmark: {torch.backends.cudnn.benchmark}")
 
     if args.local_rank == 0:
         log_filename = "{}.log".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()))
@@ -109,6 +107,9 @@ def main():
         os.makedirs(backup_dir, exist_ok=True)
         os.system("cp -r * %s/" % backup_dir)
         logger.info(f"Backup source files to {cfg.work_dir}/det3d")
+
+    logger.info("Distributed training: {}".format(distributed))
+    logger.info(f"torch.backends.cudnn.benchmark: {torch.backends.cudnn.benchmark}")
 
     # set random seeds
     if args.seed is not None:
